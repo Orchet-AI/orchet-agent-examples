@@ -12,11 +12,11 @@
     "validate-manifest": "node scripts/validate-manifest.mjs"
   },
   "dependencies": {
-    "@orchet/agent-sdk": "github:Orchet-AI/orchet-agent-sdk#feat/developer-platform-ga-sdk",
+    "@orchet/agent-sdk": "github:Orchet-AI/orchet-agent-sdk#2b9be37",
     "next": "16.2.6",
     "react": "^18",
     "react-dom": "^18",
-    "zod": "^3.23.8"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@types/node": "^20",

@@ -19,7 +19,7 @@ npm run typecheck
 npm run build
 ```
 
-The example temporarily points at the SDK GitHub branch until `@orchet/agent-sdk@0.6.0` is published to npm. After publish, change the dependency back to `^0.6.0`. The scaffold pins `next@16.2.6` because earlier Next lines are flagged by `npm audit`; generated agents require Node 20.9+.
+The example temporarily points at a reviewed SDK GitHub commit until `@orchet/agent-sdk@0.6.0` is published to npm. After publish, change the dependency back to `^0.6.0`. The scaffold pins `next@16.2.6` because earlier Next lines are flagged by `npm audit`; generated agents require Node 20.9+.
 
 ## Submission Flow
 
