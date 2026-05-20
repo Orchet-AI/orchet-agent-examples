@@ -9,8 +9,17 @@
  */
 import { defineManifest } from "@orchet/agent-sdk/manifest";
 
-const BASE_URL =
-  process.env.ORCHET_WEATHER_PUBLIC_READONLY_AGENT_BASE_URL ?? "https://weather-public-readonly.orchet.ai";
+function resolveBaseUrl(): string {
+  const configured = process.env.ORCHET_WEATHER_PUBLIC_READONLY_AGENT_BASE_URL;
+  if (configured) return configured;
+  const productionUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  if (productionUrl) return `https://${productionUrl.replace(/^https?:\/\//, "")}`;
+  const deploymentUrl = process.env.VERCEL_URL;
+  if (deploymentUrl) return `https://${deploymentUrl.replace(/^https?:\/\//, "")}`;
+  return "https://weather-public-readonly.orchet.ai";
+}
+
+const BASE_URL = resolveBaseUrl();
 
 export const manifest = defineManifest({
   agent_id: "weather-public-readonly",
