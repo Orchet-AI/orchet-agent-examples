@@ -1,0 +1,58 @@
+{
+  "agentId": "weather-public-readonly",
+  "displayName": "Weather Public Readonly",
+  "oneLiner": "Get current public weather for a city without user authentication.",
+  "category": "Weather",
+  "authModel": "none",
+  "authorizeUrl": "",
+  "tokenUrl": "",
+  "revocationUrl": "",
+  "scopes": [],
+  "hasMoneyTools": false,
+  "vendorApiBase": "https://api.open-meteo.com/v1",
+  "contactEmail": "developers@orchet.ai",
+  "tools": [
+    {
+      "name": "weather_get_current",
+      "summary": "Get current public weather for a city name.",
+      "description": "Use this when the user asks for current weather, temperature, wind, or conditions in a city. This tool reads public weather data only and does not require account connection.",
+      "method": "POST",
+      "path": "/weather_get_current",
+      "readonly": true,
+      "requestSchema": {
+        "type": "object",
+        "required": ["city"],
+        "properties": {
+          "city": {
+            "type": "string",
+            "minLength": 1,
+            "description": "City or place name, such as Tokyo or San Francisco."
+          },
+          "units": {
+            "type": "string",
+            "enum": ["metric", "imperial"],
+            "default": "metric",
+            "description": "metric returns Celsius and km/h; imperial returns Fahrenheit and mph."
+          }
+        },
+        "additionalProperties": false
+      },
+      "responseSchema": {
+        "type": "object",
+        "required": ["city", "latitude", "longitude", "temperature", "temperature_unit", "wind_speed", "wind_speed_unit", "summary"],
+        "properties": {
+          "city": { "type": "string" },
+          "latitude": { "type": "number" },
+          "longitude": { "type": "number" },
+          "temperature": { "type": "number" },
+          "temperature_unit": { "type": "string" },
+          "wind_speed": { "type": "number" },
+          "wind_speed_unit": { "type": "string" },
+          "summary": { "type": "string" }
+        },
+        "additionalProperties": false
+      },
+      "implBody": "const city = typeof (body as any).city === \"string\" ? (body as any).city.trim() : \"\";\n    const units = (body as any).units === \"imperial\" ? \"imperial\" : \"metric\";\n    if (!city) {\n      return NextResponse.json({ error: { code: \"invalid_input\", message: \"city is required\" } }, { status: 400 });\n    }\n\n    const geoUrl = new URL(\"https://geocoding-api.open-meteo.com/v1/search\");\n    geoUrl.searchParams.set(\"name\", city);\n    geoUrl.searchParams.set(\"count\", \"1\");\n    geoUrl.searchParams.set(\"language\", \"en\");\n    geoUrl.searchParams.set(\"format\", \"json\");\n    const geoRes = await fetch(geoUrl, { headers: { accept: \"application/json\" } });\n    if (!geoRes.ok) {\n      return NextResponse.json({ error: { code: \"provider_error\", message: `Open-Meteo geocoding returned ${geoRes.status}` } }, { status: 502 });\n    }\n    const geo = await geoRes.json() as { results?: Array<{ name: string; country?: string; latitude: number; longitude: number }> };\n    const place = geo.results?.[0];\n    if (!place) {\n      return NextResponse.json({ error: { code: \"not_found\", message: `No weather location found for ${city}` } }, { status: 404 });\n    }\n\n    const weatherUrl = new URL(\"https://api.open-meteo.com/v1/forecast\");\n    weatherUrl.searchParams.set(\"latitude\", String(place.latitude));\n    weatherUrl.searchParams.set(\"longitude\", String(place.longitude));\n    weatherUrl.searchParams.set(\"current\", \"temperature_2m,wind_speed_10m\");\n    if (units === \"imperial\") {\n      weatherUrl.searchParams.set(\"temperature_unit\", \"fahrenheit\");\n      weatherUrl.searchParams.set(\"wind_speed_unit\", \"mph\");\n    }\n    const weatherRes = await fetch(weatherUrl, { headers: { accept: \"application/json\" } });\n    if (!weatherRes.ok) {\n      return NextResponse.json({ error: { code: \"provider_error\", message: `Open-Meteo weather returned ${weatherRes.status}` } }, { status: 502 });\n    }\n    const weather = await weatherRes.json() as {\n      current?: { temperature_2m?: number; wind_speed_10m?: number };\n      current_units?: { temperature_2m?: string; wind_speed_10m?: string };\n    };\n    const locationLabel = place.country ? `${place.name}, ${place.country}` : place.name;\n    const temperature = Number(weather.current?.temperature_2m ?? 0);\n    const windSpeed = Number(weather.current?.wind_speed_10m ?? 0);\n    const temperatureUnit = weather.current_units?.temperature_2m ?? (units === \"imperial\" ? \"°F\" : \"°C\");\n    const windSpeedUnit = weather.current_units?.wind_speed_10m ?? (units === \"imperial\" ? \"mph\" : \"km/h\");\n    return NextResponse.json({\n      city: locationLabel,\n      latitude: place.latitude,\n      longitude: place.longitude,\n      temperature,\n      temperature_unit: temperatureUnit,\n      wind_speed: windSpeed,\n      wind_speed_unit: windSpeedUnit,\n      summary: `${locationLabel}: ${temperature}${temperatureUnit}, wind ${windSpeed} ${windSpeedUnit}.`,\n    });"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "name": "orchet-weather-public-readonly-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Orchet specialist agent: Weather Public Readonly. Get current public weather for a city without user authentication.",
+  "scripts": {
+    "dev": "next dev -p 3007",
+    "build": "next build",
+    "start": "next start -p 3007",
+    "typecheck": "tsc --noEmit",
+    "validate-manifest": "node scripts/validate-manifest.mjs"
+  },
+  "dependencies": {
+    "@orchet/agent-sdk": "github:Orchet-AI/orchet-agent-sdk#feat/developer-platform-ga-sdk",
+    "next": "16.2.6",
+    "react": "^18",
+    "react-dom": "^18",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "typescript": "^5.4.5"
+  },
+  "overrides": {
+    "postcss": "^8.5.15"
+  }
+}
