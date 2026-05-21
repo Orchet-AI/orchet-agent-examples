@@ -1,6 +1,6 @@
 # Orchet Agent Examples
 
-Golden-path examples for developers building Orchet marketplace agents.
+Golden-path examples for developers building Orchet Store agents.
 
 ## Examples
 
