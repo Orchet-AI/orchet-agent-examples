@@ -127,11 +127,11 @@ export const openapi = {
           }
         }
       },
-      "x-lumo-tool": true,
-      "x-lumo-cost-tier": "free",
-      "x-lumo-requires-confirmation": false,
-      "x-lumo-pii-required": [],
-      "x-lumo-intent-tags": [
+      "x-orchet-tool": true,
+      "x-orchet-cost-tier": "free",
+      "x-orchet-requires-confirmation": false,
+      "x-orchet-pii-required": [],
+      "x-orchet-intent-tags": [
         "weather-public-readonly"
       ]
     }
