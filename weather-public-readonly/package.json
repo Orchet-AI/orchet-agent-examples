@@ -9,10 +9,12 @@
     "build": "next build",
     "start": "next start -p 3007",
     "typecheck": "tsc --noEmit",
-    "validate-manifest": "node scripts/validate-manifest.mjs"
+    "validate-manifest": "node scripts/validate-manifest.mjs",
+    "e2e:submit": "node scripts/e2e-orchet-submit.mjs",
+    "test": "npm run typecheck && npm run validate-manifest && node scripts/e2e-orchet-submit.mjs --validate-local"
   },
   "dependencies": {
-    "@orchet/agent-sdk": "github:Orchet-AI/orchet-agent-sdk#2b9be37",
+    "@orchet/agent-sdk": "github:Orchet-AI/orchet-agent-sdk#1895252",
     "next": "16.2.6",
     "react": "^18",
     "react-dom": "^18",
