@@ -38,9 +38,21 @@ vercel deploy --prod
 Once `weather-public-readonly.orchet.ai` is live:
 
 ```bash
+ORCHET_DEVELOPER_TOKEN=... orchet-agent submit \
+  --manifest-url https://weather-public-readonly.orchet.ai/.well-known/agent.json \
+  --openapi-url https://weather-public-readonly.orchet.ai/openapi.json \
+  --health-url https://weather-public-readonly.orchet.ai/health \
+  --contact-email you@example.com
+```
+
+Signed bundles are optional advanced metadata for verified releases:
+
+```bash
 ORCHET_SIGNING_SECRET=... orchet-agent sign --bundle ./bundle.tgz --out .orchet/signature.json
 ORCHET_DEVELOPER_TOKEN=... orchet-agent submit \
   --manifest-url https://weather-public-readonly.orchet.ai/.well-known/agent.json \
+  --openapi-url https://weather-public-readonly.orchet.ai/openapi.json \
+  --health-url https://weather-public-readonly.orchet.ai/health \
   --bundle ./bundle.tgz \
   --signature-file .orchet/signature.json \
   --contact-email you@example.com
